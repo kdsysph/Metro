@@ -1,0 +1,404 @@
+{
+  "version": "1.0",
+  "models": [
+    {
+      "apiId": "Project",
+      "displayName": "Project",
+      "description": "Real estate project/development",
+      "fields": [
+        {
+          "apiId": "projectName",
+          "displayName": "Project Name",
+          "type": "STRING",
+          "isRequired": true,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "slug",
+          "displayName": "Slug",
+          "type": "SLUG",
+          "isRequired": true,
+          "isUnique": true,
+          "isLocalized": false,
+          "validations": [],
+          "slugConfig": {
+            "sourceFieldId": "projectName"
+          }
+        },
+        {
+          "apiId": "description1",
+          "displayName": "Description 1",
+          "type": "RICH_TEXT",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "decription2",
+          "displayName": "Description 2",
+          "type": "RICH_TEXT",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "completionDate",
+          "displayName": "Completion Date",
+          "type": "STRING",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "totalProjectArea",
+          "displayName": "Total Project Area (SQM)",
+          "type": "STRING",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "totalPropertyUnits",
+          "displayName": "Total Property Units",
+          "type": "STRING",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "carParkingCapacity",
+          "displayName": "Car Parking Capacity",
+          "type": "STRING",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "address",
+          "displayName": "Address",
+          "type": "TEXT",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "distanceFromFriendshipPark",
+          "displayName": "Distance from Friendship Park",
+          "type": "STRING",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "distanceFromBoleIntlAirport",
+          "displayName": "Distance from Bole Intl Airport",
+          "type": "STRING",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "distanceFromFriendshipParkDesc",
+          "displayName": "Friendship Park Description",
+          "type": "TEXT",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "distanceFromBoleIntlAirportDesc",
+          "displayName": "Bole Airport Description",
+          "type": "TEXT",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "mapLocation",
+          "displayName": "Map Location",
+          "type": "COMPONENT",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": [],
+          "componentConfig": {
+            "allowedComponents": ["MapLocation"],
+            "allowMultiple": false
+          }
+        },
+        {
+          "apiId": "image1",
+          "displayName": "Image 1",
+          "type": "ASSET",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": [],
+          "assetConfig": {
+            "allowMultiple": false
+          }
+        },
+        {
+          "apiId": "secondBanner",
+          "displayName": "Second Banner",
+          "type": "ASSET",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": [],
+          "assetConfig": {
+            "allowMultiple": false
+          }
+        },
+        {
+          "apiId": "image2",
+          "displayName": "Image 2",
+          "type": "ASSET",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": [],
+          "assetConfig": {
+            "allowMultiple": false
+          }
+        },
+        {
+          "apiId": "image3",
+          "displayName": "Image 3",
+          "type": "ASSET",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": [],
+          "assetConfig": {
+            "allowMultiple": false
+          }
+        },
+        {
+          "apiId": "image5",
+          "displayName": "Image 5",
+          "type": "ASSET",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": [],
+          "assetConfig": {
+            "allowMultiple": false
+          }
+        },
+        {
+          "apiId": "bannePicture",
+          "displayName": "Banner Picture",
+          "type": "ASSET",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": [],
+          "assetConfig": {
+            "allowMultiple": false
+          }
+        }
+      ]
+    },
+    {
+      "apiId": "MetroNews",
+      "displayName": "Metro News",
+      "description": "News articles and updates",
+      "fields": [
+        {
+          "apiId": "title",
+          "displayName": "Title",
+          "type": "STRING",
+          "isRequired": true,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "slug",
+          "displayName": "Slug",
+          "type": "SLUG",
+          "isRequired": true,
+          "isUnique": true,
+          "isLocalized": false,
+          "validations": [],
+          "slugConfig": {
+            "sourceFieldId": "title"
+          }
+        },
+        {
+          "apiId": "date",
+          "displayName": "Date",
+          "type": "DATE_TIME",
+          "isRequired": true,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "description1",
+          "displayName": "Description 1",
+          "type": "RICH_TEXT",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "description2",
+          "displayName": "Description 2",
+          "type": "RICH_TEXT",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "coverImage",
+          "displayName": "Cover Image",
+          "type": "ASSET",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": [],
+          "assetConfig": {
+            "allowMultiple": false
+          }
+        }
+      ]
+    },
+    {
+      "apiId": "TwoBedroom",
+      "displayName": "2 Bedroom Apartment",
+      "description": "2 bedroom apartment specifications by site",
+      "fields": [
+        {
+          "apiId": "description1",
+          "displayName": "Description 1",
+          "type": "RICH_TEXT",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "description2",
+          "displayName": "Description 2",
+          "type": "RICH_TEXT",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "propertyLocationLevel",
+          "displayName": "Property Location Level",
+          "type": "STRING",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "totalCirculationAreaInSqm",
+          "displayName": "Total Circulation Area (SQM)",
+          "type": "STRING",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "totalFloorAreaInSqm",
+          "displayName": "Total Floor Area (SQM)",
+          "type": "STRING",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "bedroomPerPropertyUnits",
+          "displayName": "Bedroom Per Property Units",
+          "type": "STRING",
+          "isRequired": false,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "site",
+          "displayName": "Site",
+          "type": "ENUMERATION",
+          "isRequired": true,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": [],
+          "enumConfig": {
+            "enumId": "Site"
+          }
+        }
+      ]
+    }
+  ],
+  "enums": [
+    {
+      "apiId": "Site",
+      "displayName": "Site",
+      "values": [
+        {
+          "apiId": "KAZANCHIS",
+          "displayName": "Kazanchis"
+        },
+        {
+          "apiId": "BULBULA",
+          "displayName": "Bulbula"
+        },
+        {
+          "apiId": "SARBET",
+          "displayName": "Sarbet"
+        }
+      ]
+    }
+  ],
+  "components": [
+    {
+      "apiId": "MapLocation",
+      "displayName": "Map Location",
+      "description": "Latitude and longitude coordinates",
+      "fields": [
+        {
+          "apiId": "latitude",
+          "displayName": "Latitude",
+          "type": "FLOAT",
+          "isRequired": true,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        },
+        {
+          "apiId": "longitude",
+          "displayName": "Longitude",
+          "type": "FLOAT",
+          "isRequired": true,
+          "isUnique": false,
+          "isLocalized": false,
+          "validations": []
+        }
+      ]
+    }
+  ]
+}

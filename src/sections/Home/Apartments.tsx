@@ -15,7 +15,7 @@ import KazanchisSlide from '../../../public/KazanchisSlide.png'
 import Bulbula2 from '../../../public/Bulbula2.png'
 import {useState} from "react";
 
-const Apartments = () => {
+const Apartments = ({heading1, heading2, paragraph1, paragraph2}: any) => {
     const splideOptions: any = {
         perPage: 1,
         arrows: true,
@@ -24,6 +24,11 @@ const Apartments = () => {
         gap: '0rem'
     }
 
+    const displayHeading1 = heading1 || 'Find Homes —';
+    const displayHeading2 = heading2 || 'That Redefine Luxury Living';
+    const displayP1 = paragraph1 || 'Discover our diverse collection of homes tailored to elevate your lifestyle beyond the ordinary. Whether you seek an apartment, villa, or townhouse, we have the perfect option for you. Experience exceptional living with Metro Real Estate.';
+    const displayP2 = paragraph2 || 'A diverse portfolio of property types and locations tailored to your lifestyle. From suburban tranquility in Bulbula to vibrant city living in Kazanchis, and upscale residences near Old Airport, find your perfect home with Metro Real Estate.';
+
     const [hoveredLink, setHoveredLink] = useState<any>(null);
     return (
         <div className='px-5 lg:px-0 container mx-auto flex flex-col gap-28'>
@@ -31,22 +36,16 @@ const Apartments = () => {
 
             <div data-aos="fade-up" data-aos-duration="1000" className='flex flex-col lg:flex-row justify-between '>
                 <div className='w-full lg:w-[33%] '>
-                    <p className='text-5xl font-semibold'>Find Homes —</p>
+                    <p className='text-5xl font-semibold'>{displayHeading1}</p>
                 </div>
                 <div className='w-full lg:w-[66.5%] flex flex-col gap-12'>
-                    <p className='text-5xl font-semibold'>That Redefine Luxury Living</p>
+                    <p className='text-5xl font-semibold'>{displayHeading2}</p>
                     <div className='flex w-full lg:w-[40%] text-[#00416B] text-sm font-semibold'>
                         <p className='uppercase'>Explore Homes for Every Lifestyle</p>
                     </div>
                     <div className='flex justify-start gap-5'>
-                        <p className='w-full lg:w-1/2 text-lg  font-normal text-[#002740]'>Discover our diverse
-                            collection of homes tailored to elevate your lifestyle beyond the ordinary. Whether you seek
-                            an apartment, villa, or townhouse, we have the perfect option for you. Experience
-                            exceptional living with Metro Real Estate.</p>
-                        <p className='hidden lg:flex w-full lg:w-1/2 text-lg font-normal text-[#002740]'>A diverse
-                            portfolio of property types and locations tailored to your lifestyle. From suburban
-                            tranquility in Bulbula to vibrant city living in Kazanchis, and upscale residences near Old
-                            Airport, find your perfect home with Metro Real Estate.</p>
+                        <p className='w-full lg:w-1/2 text-lg font-normal text-[#002740]'>{displayP1}</p>
+                        <p className='hidden lg:flex w-full lg:w-1/2 text-lg font-normal text-[#002740]'>{displayP2}</p>
                     </div>
                     <div className=''>
                         <Link

@@ -1,47 +1,25 @@
 'use client'
 
 import Image from "next/image";
-import AbourImage2 from "../../../../public/about2Image.svg";
 import NewsDetailImage from "../../../../public/NewsDetail.svg";
 import NextIcon from "../../../../public/NextIcon.svg";
 import {GoDownload} from "react-icons/go";
 import CallIcon from "../../../../public/CallIcon.svg";
-import Bedroom2Image from "../../../../public/2BedromImage.jpg";
-import Bedroom3Imge from "../../../../public/3BedroomImage.jpg";
-import LuxuriousImage from "../../../../public/LuxuriousImage.jpg";
-import React, {useContext, useEffect} from "react";
-import {useQuery, gql} from "@apollo/client";
-import ReactMarkdown from 'react-markdown';
+import React, {useContext, useEffect, useState} from "react";
 import Link from "next/link";
-import Bulbula2 from "../../../../public/Bulbula2.png";
 import {SplashPageContext} from "@/context/SplashPageContext";
-// @ts-ignore
-import {Splide, SplideSlide} from '@splidejs/react-splide';
-import '@splidejs/react-splide/css';
-import NextIconLight from "../../../../public/NextIconLight.svg";
-
-const QUERY = gql`
-    query getMetroNews($slug: String!) {
-        metroNews(where: {slug: $slug}) {
-            id
-            title
-            date
-            description1
-            description2
-            coverImage{
-              url
-            }
-            
-          }
-    }
-`;
-
+import {sanityClient, getImageUrl} from '@/lib/sanity';
+import {queries} from '@/lib/groq-queries';
+import {PortableText} from '@portabletext/react';
+import DiscoverProperties from '@/sections/DiscoverProperties';
+import {useLanguage} from '@/context/LanguageContext';
+import {localizeField} from '@/lib/localize';
 const NewsDetail = ({params}: { params: { slug: string } }) => {
     const {slug} = params;
-
-    const {loading, error, data} = useQuery(QUERY, {
-        variables: {slug},
-    });
+    const {lang} = useLanguage();
+    const [news, setNews] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     const context = useContext(SplashPageContext);
 
@@ -52,26 +30,41 @@ const NewsDetail = ({params}: { params: { slug: string } }) => {
     const {setSplashPage} = context;
 
     useEffect(() => {
+        async function fetchNews() {
+            try {
+                setLoading(true);
+                const data = await sanityClient.fetch(queries.newsBySlug, { slug });
+                setNews(data);
+                setError(null);
+            } catch (err) {
+                console.error('Error fetching news:', err);
+                setError('Failed to load news');
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchNews();
+    }, [slug]);
+
+    useEffect(() => {
         if (loading) {
             console.log("loading true", loading)
-            // setSplashPage(true);
         } else {
             console.log("loading false", loading)
-            // setSplashPage(false);
         }
-    }, [setSplashPage, loading]);
+    }, [loading]);
 
-    if (error) {
-        console.log("errrrrrrrrrrrrrrr", error)
-        return <div>Error...</div>
+    if (loading) {
+        return <div className="flex justify-center items-center h-[50vh]">Loading...</div>;
     }
 
-    console.log(data?.metroNews)
+    if (error || !news) {
+        return <div className="flex justify-center items-center h-[50vh]">News not found</div>;
+    }
 
     const options: Intl.DateTimeFormatOptions = {year: 'numeric', month: 'long', day: 'numeric'};
-    const date = new Date(data?.metroNews?.date);
+    const date = new Date(news?.date);
     const formattedDate = date.toLocaleDateString('en-US', options).toUpperCase();
-
 
     return (
         <>
@@ -79,7 +72,7 @@ const NewsDetail = ({params}: { params: { slug: string } }) => {
                 className='container mx-auto pt-28 pb-[72px] flex flex-col items-start gap-14 lg:gap-28 px-5 lg:px-0'>
                 <div
                     className='flex flex-col w-full lg:w-[66.5%] '>
-                    <p className='text-5xl lg:text-7xl font-medium leading-snug'>{data?.metroNews.title}</p>
+                    <p className='text-5xl lg:text-7xl font-medium leading-snug'>{localizeField(news, 'title', lang)}</p>
                     <div className='-my-10 lg:my-0 hidden lg:flex w-full lg:w-[35%]'>
                         <p className='flex lg:hidden text-[#002740] text-lg font-medium'>{formattedDate}</p>
                     </div>
@@ -90,67 +83,73 @@ const NewsDetail = ({params}: { params: { slug: string } }) => {
                     </div>
                     <div
                         className='flex flex-col w-full lg:w-[66.5%] gap-28'>
-                        {/*<p className='text-5xl lg:text-5xl font-medium leading-snug'>{data?.metroNews.title}</p>*/}
                         <div className='-my-10 lg:my-0 lg:hidden w-full lg:w-[35%]'>
                             <p className='text-[#002740] text-lg font-medium'>{formattedDate}</p>
                         </div>
                         <div className='flex flex-col justify-start gap-5'>
-                            <p className='w-full text-lg  font-normal text-[#002740'>
-                                {data?.metroNews.description1.map((item: any, index: number) => (
-                                    <ReactMarkdown key={index}>{item}</ReactMarkdown>
-                                ))}
-                            </p>
+                            <div className='w-full text-lg font-normal text-[#002740]'>
+                                <PortableText value={localizeField(news, 'description1', lang) || []} />
+                            </div>
                         </div>
                     </div>
                 </div>
 
 
-                <div style={{backgroundImage: `url(${data?.metroNews.coverImage.url})`}}
+                <div style={{backgroundImage: `url(${getImageUrl(news.coverImage)})`}}
                      className=' h-[60vh] bg-cover bg-center w-full'>
 
                 </div>
-                {/*<Image src={data?.metroNews.coverImage.url} width={1500} height={900} alt='' className='w-full h-[80vh]'/>*/}
-                <div className='flex justify-between gap-4 items-center'>
-                    <div className='hidden lg:flex w-full lg:w-[33%] text-[#738195] text-md font-medium'>
-                        <p></p>
+                <div className='flex justify-between gap-4 items-start'>
+                    <div className='hidden lg:flex w-full lg:w-[33%]'>
+                        <div className='w-full sticky top-28'>
+                            {(() => {
+                                const imgSrc = getImageUrl(news.secondaryImage);
+                                return imgSrc ? (
+                                    <Image
+                                        src={imgSrc}
+                                        width={400}
+                                        height={500}
+                                        alt='Metro Real Estate decorative image'
+                                        className='w-full object-cover'
+                                    />
+                                ) : (
+                                    <Image
+                                        src={NewsDetailImage}
+                                        width={400}
+                                        height={500}
+                                        alt='Metro Real Estate decorative image'
+                                        className='w-full object-cover'
+                                    />
+                                );
+                            })()}
+                        </div>
                     </div>
                     <div
                         className='flex flex-col gap-10 w-full lg:w-[66.5%]'>
-                        {data?.metroNews.description2.map((item: any, index: number) => (
-                            <ReactMarkdown key={index}>{item}</ReactMarkdown>
-                        ))}
-                        {/*<p className='text-xl font-medium leading-snug'>HOW WE ACHIEVED THE RIBBA AWARD?</p>*/}
-                        {/*<div className='flex flex-col justify-start gap-5'>*/}
-                        {/*    <p className='w-full text-lg  font-normal text-[#002740'>*/}
-                        {/*        We are live today on Facebook and Youtube! Hello, beautiful people! What are we going to*/}
-                        {/*        be talking about today? Well, before I tell you, I just want to let you guys know I miss*/}
-                        {/*        ya and I hope you missed us, and here we are back on the livestream. But! Back by*/}
-                        {/*        popular demand, today we are going to be talking to Aaron Atchinson, he’s the founder of*/}
-                        {/*        Farm Design based in Pasadena, and he is one of–he’s a man who has come from humble*/}
-                        {/*        roots. </p>*/}
-
-                        {/*</div>*/}
-                        {/*<div*/}
-                        {/*    className='flex flex-col gap-10 w-full'>*/}
-                        {/*    <p className='text-4xl font-medium leading-snug'>Metro™ Bulbula Village uses only the latest*/}
-                        {/*        available amenities for a comfortable life</p>*/}
-                        {/*    <div className='flex flex-col justify-start gap-5'>*/}
-                        {/*        <p className='w-full text-lg  font-normal text-[#002740'>*/}
-                        {/*            We are live today on Facebook and Youtube! Hello, beautiful people! What are we going to*/}
-                        {/*            be talking about today? Well, before I tell you, I just want to let you guys know I miss*/}
-                        {/*            ya and I hope you missed us, and here we are back on the livestream. But! Back by*/}
-                        {/*            popular demand, today we are going to be talking to Aaron Atchinson, he’s the founder of*/}
-                        {/*            Farm Design based in Pasadena, and he is one of–he’s a man who has come from humble*/}
-                        {/*            roots. </p>*/}
-                        {/*        <p className='w-full text-lg  font-normal text-[#002740]'>Humble*/}
-                        {/*            beginnings, and that’s his description, not mine. Now often times when we look at*/}
-                        {/*            successful graphic designers and successful businesses, we make the assumption that it*/}
-                        {/*            was preordained. That everything lined up for them and that that path was inevitable.*/}
-                        {/*            This was most definitely not the case, so you guys are gonna want to definitely stay*/}
-                        {/*            tuned to this because we’re gonna have a conversation with Aaron. He grew up in a town*/}
-                        {/*            of 300 people. Small town. Stick around! Roll the titles!</p>*/}
-                        {/*    </div>*/}
-                        {/*</div>*/}
+                        <PortableText value={localizeField(news, 'description2', lang) || []} />
+                        {/* Mobile decorative image */}
+                        <div className='flex lg:hidden w-full'>
+                            {(() => {
+                                const imgSrc = getImageUrl(news.secondaryImage);
+                                return imgSrc ? (
+                                    <Image
+                                        src={imgSrc}
+                                        width={400}
+                                        height={300}
+                                        alt='Metro Real Estate decorative image'
+                                        className='w-full object-cover'
+                                    />
+                                ) : (
+                                    <Image
+                                        src={NewsDetailImage}
+                                        width={400}
+                                        height={300}
+                                        alt='Metro Real Estate decorative image'
+                                        className='w-full object-cover'
+                                    />
+                                );
+                            })()}
+                        </div>
                         <div className='w-full flex flex-col lg:flex-row justify-start'>
                             <Link
                                 href='/contact#form-section'
@@ -177,97 +176,7 @@ const NewsDetail = ({params}: { params: { slug: string } }) => {
                 </div>
 
 
-                <div data-aos="fade-up" data-aos-duration="1000"
-                     className='w-full flex flex-col gap-5 lg:px-0'>
-
-
-                    <div className='w-full flex justify-between items-center '>
-                        <p className='text-3xl text-[#001624] font-medium'>
-                            Discover Metro Properties
-                        </p>
-                        <Link href='/property-list'
-                                className='hidden lg:flex text-md justify-center gap-4 font-medium w-full lg:w-80 h-14 bg-[#00416B] text-white hover:bg-main transition-all duration-200 items-center'>Discover
-                            your
-                            next home
-                            <Image src={NextIconLight} width={20} height={20} alt='next'/>
-                        </Link>
-                    </div>
-
-                    <div className='border-[1px] border-[#374151] w-full '>
-
-                    </div>
-
-                    <div className='w-full hidden lg:flex flex-wrap justify-between gap-y-10'>
-                        <Link href='/life-style/2-1A-bedroom-apartment'
-                              className='w-full lg:w-[33%] flex flex-col gap-4'>
-                            <Image src={Bedroom2Image} alt='' className='w-full'/>
-                            <div className='flex flex-col gap-2'>
-                                <p className='text-[#002740] text-lg font-medium'>2 Bedroom Apartment</p>
-                                <p className='text-[#738195] text-sm font-normal'>KAZANCHIS PROJECT SITE</p>
-                            </div>
-                        </Link>
-                        <Link href='/life-style/3-2A-bedroom-apartment'
-                              className='w-full lg:w-[33%] flex flex-col gap-4'>
-                            <Image src={Bedroom3Imge} alt='' className='w-full'/>
-                            <div className='flex flex-col gap-2'>
-                                <p className='text-[#002740] text-lg font-medium'>3 Bedroom Apartment</p>
-                                <p className='text-[#738195] text-sm font-normal'>SARBET PROJECT SITE</p>
-                            </div>
-                        </Link>
-                        <Link href='/life-style/townhouses' className='w-full lg:w-[33%] flex flex-col gap-4'>
-                            <Image src={LuxuriousImage} alt='' className='w-full'/>
-                            <div className='flex flex-col gap-2'>
-                                <p className='text-[#002740] text-lg font-medium'>Luxurious Penthouses</p>
-                                <p className='text-[#738195] text-sm font-normal'>KAZANCHIS PROJECT SITE</p>
-                            </div>
-                        </Link>
-                    </div>
-
-                    <div className='lg:hidden block'>
-                        <Splide options={{
-                            perPage: 1,
-                            arrows: true,
-                            autoplay: true,
-                            interval: 3000,
-                            type: 'loop',
-                            pagination: false
-                        }}>
-
-                            <SplideSlide>
-                                <Link href='/life-style/2-1A-bedroom-apartment'
-                                      className='w-full lg:w-[33%] flex flex-col gap-4'>
-                                    <Image src={Bedroom2Image} alt='' className='w-full'/>
-                                    <div className='flex flex-col gap-2'>
-                                        <p className='text-[#002740] text-lg font-medium'>2 Bedroom Apartment</p>
-                                        <p className='text-[#738195] text-sm font-normal'>KAZANCHIS PROJECT SITE</p>
-                                    </div>
-                                </Link>
-                            </SplideSlide>
-                            <SplideSlide>
-                                <Link href='/life-style/3-2A-bedroom-apartment'
-                                      className='w-full lg:w-[33%] flex flex-col gap-4'>
-                                    <Image src={Bedroom3Imge} alt='' className='w-full'/>
-                                    <div className='flex flex-col gap-2'>
-                                        <p className='text-[#002740] text-lg font-medium'>3 Bedroom Apartment</p>
-                                        <p className='text-[#738195] text-sm font-normal'>SARBET PROJECT SITE</p>
-                                    </div>
-                                </Link>
-                            </SplideSlide>
-                            <SplideSlide>
-                                <Link href='/life-style/townhouses'
-                                      className='w-full lg:w-[33%] flex flex-col gap-4'>
-                                    <Image src={LuxuriousImage} alt='' className='w-full'/>
-                                    <div className='flex flex-col gap-2'>
-                                        <p className='text-[#002740] text-lg font-medium'>Luxurious Penthouses</p>
-                                        <p className='text-[#738195] text-sm font-normal'>KAZANCHIS PROJECT SITE</p>
-                                    </div>
-                                </Link>
-                            </SplideSlide>
-                        </Splide>
-                    </div>
-
-
-                </div>
+                <DiscoverProperties />
             </div>
         </>
     )

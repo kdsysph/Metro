@@ -7,27 +7,18 @@ import NextIcon from '../../public/NextIcon.svg'
 import Link from 'next/link';
 import phoneCallIcon from '../../public/phoneCallIcon.svg'
 import {usePathname} from 'next/navigation';
-import {useQuery, gql} from "@apollo/client";
 import RegisterInterest from "@/sections/RegisterInterest";
 import {BsX} from 'react-icons/bs'
 import {SplashPageContext} from "@/context/SplashPageContext";
+import {useLanguage} from "@/context/LanguageContext";
 
-const QUERY = gql`
-                {
-          projects {
-            id
-            projectName
-            slug
-          }
-        }
-    `
-const Header = ({setProjects}: any) => {
+const Header = ({setProjects, projects}: any) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-    // const router = useRouter(); // Add this line to get the current route
     const [isRegisterInterestOpen, setRegisterInterestOpen] = useState(false);
 
     const currentPage = usePathname();
+    const {lang, setLang} = useLanguage();
 
     useEffect(() => {
         console.log(isMobileMenuOpen);
@@ -92,17 +83,6 @@ const Header = ({setProjects}: any) => {
         };
     }, []);
 
-    const {data, loading, error} = useQuery(QUERY);
-
-    // if (loading){
-    //     return <div>Loading...</div>
-    // }
-
-    // if (error) {
-    //     console.log(error)
-    //     return <div>Error...</div>
-    // }
-
     useEffect(() => {
         if (isMobileMenuOpen) {
             document.body.style.overflow = 'hidden';
@@ -110,9 +90,6 @@ const Header = ({setProjects}: any) => {
             document.body.style.overflow = 'auto';
         }
     }, [isMobileMenuOpen]);
-
-    console.log(data)
-    setProjects(data?.projects);
 
     const handleRegistrationOpen = () => {
         setRegisterInterestOpen(!isRegisterInterestOpen)
@@ -128,12 +105,8 @@ const Header = ({setProjects}: any) => {
     const {setSplashPage} = context;
 
     useEffect(() => {
-        if (loading) {
-            setSplashPage(true);
-        } else {
-            setSplashPage(false);
-        }
-    }, [setSplashPage, loading]);
+        // No more loading state needed since projects are fetched in CustomeLayout
+    }, [setSplashPage]);
 
     return (
         <div style={{
@@ -147,74 +120,64 @@ const Header = ({setProjects}: any) => {
                 <div
                     className={`hidden w-[70%] md:flex md:flex-row flex-col items-center justify-between lg:space-x-1 navigation-menu pb-3 md:pb-0 ${isMobileMenuOpen ? '' : 'hidden'}`}>
                     {
-                        loading ? <div className={`dropdown-menu flex justify-center items-center`}>
+                        projects && projects.map((project: any, index: number) => (
+                            project.projectName === 'Bulbula' ? (
+                                    <div key={index} className="relative z-100">
+                                        <button
+                                            className="dropdown-toggle py-2 hover:text-primary flex items-center gap-2 rounded"
+                                            onClick={handleDropdownToggle}>
+                                            <span className="pointer-events-none">{project.projectName}</span>
+                                            <svg className="w-3 h-3 pointer-events-none"
+                                                 xmlns="http://www.w3.org/2000/svg" width="24"
+                                                 height="24"
+                                                 viewBox="0 0 24 24">
+                                                <title>chevron-down</title>
+                                                <g fill="none">
+                                                    <path
+                                                        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    ></path>
+                                                </g>
+                                            </svg>
+                                        </button>
+                                        <div style={{zIndex: 1000}}
+                                             className="dropdown-menu absolute hidden bg-white text-#001624 rounded-b-lg pb-2 w-40">
 
-                                <svg aria-hidden="true"
-                                     className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
-                                     viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                                        fill="currentColor"/>
-                                    <path
-                                        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                                        fill="currentFill"/>
-                                </svg>
-                            </div>
-                            :
-                            data && data.projects.map((project: any, index: number) => (
-                                project.projectName === 'Bulbula' ? (
-                                        <div key={index} className="relative z-100">
-                                            <button
-                                                className="dropdown-toggle py-2 hover:text-primary flex items-center gap-2 rounded"
-                                                onClick={handleDropdownToggle}>
-                                                <span className="pointer-events-none">{project.projectName}</span>
-                                                <svg className="w-3 h-3 pointer-events-none"
-                                                     xmlns="http://www.w3.org/2000/svg" width="24"
-                                                     height="24"
-                                                     viewBox="0 0 24 24">
-                                                    <title>chevron-down</title>
-                                                    <g fill="none">
-                                                        <path
-                                                            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                                                            stroke="currentColor"
-                                                            strokeWidth="1.5"
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                        ></path>
-                                                    </g>
-                                                </svg>
-                                            </button>
-                                            <div style={{zIndex: 1000}}
-                                                 className="dropdown-menu absolute hidden bg-white text-#001624 rounded-b-lg pb-2 w-40">
-
-                                                <Link href={`/projects/${project.slug}`}
-                                                      className="block px-6 py-2 hover:bg-gray-100">
-                                                    About Site
-                                                </Link>
-                                                <Link href="/life-style/villas"
-                                                      className="block px-6 py-2 hover:bg-gray-100">
-                                                    Villas
-                                                </Link>
-                                                <Link href="/life-style/townhouses"
-                                                      className="block px-6 py-2 hover:bg-gray-100">
-                                                    Town Houses
-                                                </Link>
-                                                <Link href="/property-list"
-                                                      className="block px-6 py-2 hover:bg-gray-100">
-                                                    Apartments
-                                                </Link>
-                                            </div>
+                                            <Link href={`/projects/${project.slug?.current}`}
+                                                  className="block px-6 py-2 hover:bg-gray-100">
+                                                About Site
+                                            </Link>
+                                            <Link href="/life-style/villas"
+                                                  className="block px-6 py-2 hover:bg-gray-100">
+                                                Villas
+                                            </Link>
+                                            <Link href="/life-style/townhouses"
+                                                  className="block px-6 py-2 hover:bg-gray-100">
+                                                Town Houses
+                                            </Link>
+                                            <Link href="/life-style/4-bedroom-apartments?location=Bulbula"
+                                                  className="block px-6 py-2 hover:bg-gray-100">
+                                                Apartments
+                                            </Link>
                                         </div>
-                                    ) :
-                                    <Link href={`/projects/${project.slug}`} key={project.id}
-                                          className={`py-2 block hover:text-primary ${currentPage === project.slug ? 'text-primary' : ''}`}>
-                                        {project.projectName}
-                                    </Link>
-                            ))
+                                    </div>
+                                ) :
+                                <Link href={`/projects/${project.slug?.current}`} key={project._id || project.id || index}
+                                      className={`py-2 block hover:text-primary ${currentPage === project.slug?.current ? 'text-primary' : ''}`}>
+                                    {project.projectName}
+                                </Link>
+                        ))
                     }
                     <Link href="/gallery"
                           className={`py-2 px-3 block hover:text-primary ${currentPage === '/gallery' ? 'text-primary' : ''}`}>
                         Gallery
+                    </Link>
+                    <Link href="/news-room"
+                          className={`py-2 px-3 block hover:text-primary ${currentPage === '/news-room' ? 'text-primary' : ''}`}>
+                        News Room
                     </Link>
                     <Link href="/property-list"
                           className={`py-2 block hover:text-primary ${currentPage === '/property-list' ? 'text-primary' : ''}`}>
@@ -232,7 +195,7 @@ const Header = ({setProjects}: any) => {
                     <div className="relative z-100">
                         <button className="dropdown-toggle py-2 px-3 hover:text-primary flex items-center gap-2 rounded"
                                 onClick={handleDropdownToggle}>
-                            <span className="pointer-events-none">EN</span>
+                            <span className="pointer-events-none">{lang === 'am' ? 'AM' : 'EN'}</span>
                             <svg className="w-3 h-3 pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="24"
                                  height="24"
                                  viewBox="0 0 24 24">
@@ -249,15 +212,12 @@ const Header = ({setProjects}: any) => {
                             </svg>
                         </button>
                         <div className="dropdown-menu absolute hidden bg-white text-#001624 rounded-b-lg pb-2 w-32">
-                            <Link href="#" className="block px-6 py-2 hover:bg-gray-100">
+                            <button onClick={() => { setLang('en'); document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden')); }} className={`block w-full text-left px-6 py-2 hover:bg-gray-100 ${lang === 'en' ? 'text-primary font-semibold' : ''}`}>
                                 English
-                            </Link>
-                            <Link href="#" className="block px-6 py-2 hover:bg-gray-100">
+                            </button>
+                            <button onClick={() => { setLang('am'); document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden')); }} className={`block w-full text-left px-6 py-2 hover:bg-gray-100 ${lang === 'am' ? 'text-primary font-semibold' : ''}`}>
                                 Amharic
-                            </Link>
-                            {/*<Link href="#" className="block px-6 py-2 hover:bg-gray-800">*/}
-                            {/*    Bulbula*/}
-                            {/*</Link>*/}
+                            </button>
                         </div>
                     </div>
                     <div className=''>
@@ -275,80 +235,67 @@ const Header = ({setProjects}: any) => {
                 {/*mobile*/}
 
 
+
                 <div
                     style={{zIndex: 1000}}
                     className={`pl-3 flex md:hidden text-white absolute bg-main w-full side-menu h-[92vh] top-[8vh] flex-col items-start justify-start gap-6 pt-14 md:space-x-1 pb-3 md:pb-0 transition-all duration-300 ease-in ${isMobileMenuOpen ? 'opacity-100 flex' : 'opacity-0 hidden'}`}>                    {/*<a href="#" className="py-2 px-3 block">*/}
                     {
-                        loading ? <div className={`dropdown-menu flex justify-center items-center`}>
+                        projects && projects.map((project: any, index: number) => (
+                            project.projectName === 'Bulbula' ? (
+                                    <div key={index} className="relative z-100">
+                                        <button
+                                            className="dropdown-toggle py-2 hover:text-primary flex items-center gap-2 rounded"
+                                            onClick={handleDropdownToggle}>
 
-                                <svg aria-hidden="true"
-                                     className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
-                                     viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-                                        fill="currentColor"/>
-                                    <path
-                                        d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-                                        fill="currentFill"/>
-                                </svg>
-                            </div>
-                            :
-                            data && data.projects.map((project: any, index: number) => (
-                                project.projectName === 'Bulbula' ? (
-                                        <div key={index} className="relative z-100">
-                                            <button
-                                                className="dropdown-toggle py-2 hover:text-primary flex items-center gap-2 rounded"
-                                                onClick={handleDropdownToggle}>
+                                            <span
+                                                className="pointer-events-none hover:bg-gray-800 text-xl flex gap-2 items-center px-3 w-full hover:text-primary"><span
+                                                className='text-[#6B7280]'>02</span>{project.projectName}</span>
+                                            <svg className="w-3 h-3 pointer-events-none"
+                                                 xmlns="http://www.w3.org/2000/svg" width="24"
+                                                 height="24"
+                                                 viewBox="0 0 24 24">
+                                                <title>chevron-down</title>
+                                                <g fill="none">
+                                                    <path
+                                                        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                                                        stroke="currentColor"
+                                                        strokeWidth="1.5"
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                    ></path>
+                                                </g>
+                                            </svg>
+                                        </button>
+                                        <div style={{zIndex: 1000}}
+                                             className="dropdown-menu absolute hidden bg-white text-#001624 rounded-b-lg pb-2 w-80">
 
-                                                <span
-                                                    className="pointer-events-none hover:bg-gray-800 text-xl flex gap-2 items-center px-3 w-full hover:text-primary"><span
-                                                    className='text-[#6B7280]'>02</span>{project.projectName}</span>
-                                                <svg className="w-3 h-3 pointer-events-none"
-                                                     xmlns="http://www.w3.org/2000/svg" width="24"
-                                                     height="24"
-                                                     viewBox="0 0 24 24">
-                                                    <title>chevron-down</title>
-                                                    <g fill="none">
-                                                        <path
-                                                            d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                                                            stroke="currentColor"
-                                                            strokeWidth="1.5"
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                        ></path>
-                                                    </g>
-                                                </svg>
-                                            </button>
-                                            <div style={{zIndex: 1000}}
-                                                 className="dropdown-menu absolute hidden bg-white text-#001624 rounded-b-lg pb-2 w-80">
-
-                                                <Link onClick={() => setMobileMenuOpen(false)}
-                                                      href={`/projects/${project.slug}`}
-                                                      className="hover:bg-gray-800 text-xl flex gap-2 items-center py-2 px-6 w-full hover:text-primary ">
-                                                    About Site
-                                                </Link>
-                                                <Link onClick={() => setMobileMenuOpen(false)} href="/life-style/villas"
-                                                      className="hover:bg-gray-800 text-xl flex gap-2 items-center py-2 px-6 w-full hover:text-primary ">
-                                                    Villas
-                                                </Link>
-                                                <Link onClick={() => setMobileMenuOpen(false)} href="/life-style/townhouses"
-                                                      className="hover:bg-gray-800 text-xl flex gap-2 items-center py-2 px-6 w-full hover:text-primary ">
-                                                    Town Houses
-                                                </Link>
-                                                <Link onClick={() => setMobileMenuOpen(false)} href="/property-list"
-                                                      className="hover:bg-gray-800 text-xl flex gap-2 items-center py-2 px-6 w-full hover:text-primary ">
-                                                    Apartments
-                                                </Link>
-                                            </div>
+                                            <Link onClick={() => setMobileMenuOpen(false)}
+                                                  href={`/projects/${project.slug?.current}`}
+                                                  className="hover:bg-gray-800 text-xl flex gap-2 items-center py-2 px-6 w-full hover:text-primary ">
+                                                About Site
+                                            </Link>
+                                            <Link onClick={() => setMobileMenuOpen(false)} href="/life-style/villas"
+                                                  className="hover:bg-gray-800 text-xl flex gap-2 items-center py-2 px-6 w-full hover:text-primary ">
+                                                Villas
+                                            </Link>
+                                            <Link onClick={() => setMobileMenuOpen(false)} href="/life-style/townhouses"
+                                                  className="hover:bg-gray-800 text-xl flex gap-2 items-center py-2 px-6 w-full hover:text-primary ">
+                                                Town Houses
+                                            </Link>
+                                            <Link onClick={() => setMobileMenuOpen(false)} href="/life-style/4-bedroom-apartments?location=Bulbula"
+                                                  className="hover:bg-gray-800 text-xl flex gap-2 items-center py-2 px-6 w-full hover:text-primary ">
+                                                Apartments
+                                            </Link>
                                         </div>
-                                    ) :
-                                    <Link onClick={() => setMobileMenuOpen(false)} href={`/projects/${project.slug}`}
-                                          key={project.id}
-                                          className={`hover:bg-gray-800 text-xl flex gap-2 items-center py-2 px-3 w-full hover:text-primary ${currentPage === project.slug ? 'text-primary' : ''}`}>
-                                        <span className='text-[#6B7280]'>0{index + 1}</span>
-                                        {project.projectName}
-                                    </Link>
-                            ))
+                                    </div>
+                                ) :
+                                <Link onClick={() => setMobileMenuOpen(false)} href={`/projects/${project.slug?.current}`}
+                                      key={project._id || project.id || index}
+                                      className={`hover:bg-gray-800 text-xl flex gap-2 items-center py-2 px-3 w-full hover:text-primary ${currentPage === project.slug?.current ? 'text-primary' : ''}`}>
+                                    <span className='text-[#6B7280]'>0{index + 1}</span>
+                                    {project.projectName}
+                                </Link>
+                        ))
                     }
                     <Link onClick={() => setMobileMenuOpen(false)} href="/gallery"
                           className={`hover:bg-gray-800 text-xl flex gap-2 items-center py-2 px-3 w-full hover:text-primary ${currentPage === '/gallery' ? 'text-primary' : ''}`}>
@@ -391,7 +338,7 @@ const Header = ({setProjects}: any) => {
                 <div className="md:hidden relative z-100">
                     <button className="dropdown-toggle py-2 px-3 hover:text-primary flex items-center gap-2 rounded"
                             onClick={handleDropdownToggle}>
-                        <span className="pointer-events-none">EN</span>
+                        <span className="pointer-events-none">{lang === 'am' ? 'AM' : 'EN'}</span>
                         <svg className="w-3 h-3 pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="24"
                              height="24"
                              viewBox="0 0 24 24">
@@ -408,15 +355,12 @@ const Header = ({setProjects}: any) => {
                         </svg>
                     </button>
                     <div className="dropdown-menu absolute hidden bg-main text-white rounded-b-lg pb-2 w-32">
-                        <Link href="#" className="block px-6 py-2 hover:bg-gray-800">
+                        <button onClick={() => { setLang('en'); document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden')); }} className={`block w-full text-left px-6 py-2 hover:bg-gray-800 ${lang === 'en' ? 'text-primary font-semibold' : ''}`}>
                             English
-                        </Link>
-                        <Link href="#" className="block px-6 py-2 hover:bg-gray-800">
+                        </button>
+                        <button onClick={() => { setLang('am'); document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.add('hidden')); }} className={`block w-full text-left px-6 py-2 hover:bg-gray-800 ${lang === 'am' ? 'text-primary font-semibold' : ''}`}>
                             Amharic
-                        </Link>
-                        {/*<Link href="#" className="block px-6 py-2 hover:bg-gray-800">*/}
-                        {/*    Bulbula*/}
-                        {/*</Link>*/}
+                        </button>
                     </div>
                 </div>
                 <a href="tel:+25193 806 0606"
