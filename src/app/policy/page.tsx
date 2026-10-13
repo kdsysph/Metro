@@ -1,3 +1,5 @@
+'use client';
+
 import exp from "node:constants";
 import Image from "next/image";
 import AbourImage2 from "../../../public/about2Image.svg";

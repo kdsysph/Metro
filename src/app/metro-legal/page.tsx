@@ -1,3 +1,5 @@
+'use client';
+
 import Image from "next/image";
 import NextIcon from "../../../public/NextIcon.svg";
 import {GoDownload} from "react-icons/go";
