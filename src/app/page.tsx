@@ -22,6 +22,7 @@ import {sanityClient} from '@/lib/sanity';
 import {queries} from '@/lib/groq-queries';
 import {useLanguage} from '@/context/LanguageContext';
 import {localizeField} from '@/lib/localize';
+import {getCTASettings, CTASettings, getCTAText} from '@/lib/cta-utils';
 
 // Hardcoded fallbacks
 const FALLBACK_ELEGANCE_HEADING = 'Experience Unmatched Elegance with Metro™';
@@ -32,17 +33,21 @@ export default function Home() {
     const nextSectionRef = useRef(null);
     const [isRegisterInterestOpen, setRegisterInterestOpen] = useState(false);
     const [homePage, setHomePage] = useState<any>(null);
+    const [ctaSettings, setCtaSettings] = useState<CTASettings | null>(null);
     const {lang} = useLanguage();
 
     useEffect(() => {
         sanityClient.fetch(queries.homePage)
             .then((data: any) => setHomePage(data))
             .catch(() => setHomePage(null));
+
+        getCTASettings().then(setCtaSettings);
     }, []);
 
     const eleganceHeading = localizeField(homePage, 'eleganceSectionHeading', lang) || FALLBACK_ELEGANCE_HEADING;
     const eleganceP1 = localizeField(homePage, 'eleganceParagraph1', lang) || FALLBACK_ELEGANCE_P1;
     const eleganceP2 = localizeField(homePage, 'eleganceParagraph2', lang) || FALLBACK_ELEGANCE_P2;
+    const getPropertyListText = getCTAText(ctaSettings, 'getPropertyListButton', lang);
 
     return (
         <main className='flex flex-col lg:gap-28 font-sans'>
@@ -61,6 +66,7 @@ export default function Home() {
                         paragraph1={localizeField(homePage, 'introParagraph1', lang)}
                         paragraph2={localizeField(homePage, 'introParagraph2', lang)}
                         stats={homePage?.stats}
+                        ctaSettings={ctaSettings}
                     />
                 </div>
                 <NumbersSection
@@ -69,6 +75,7 @@ export default function Home() {
                     heading={localizeField(homePage, 'numbersSectionHeading', lang)}
                     paragraph1={localizeField(homePage, 'numbersSectionParagraph1', lang)}
                     paragraph2={localizeField(homePage, 'numbersSectionParagraph2', lang)}
+                    ctaSettings={ctaSettings}
                 />
                 <div className="bg-[#041428] w-full">
                     <div className='container mx-auto flex justify-end'>
@@ -97,7 +104,7 @@ export default function Home() {
                                         <Link
                                             href='/download-brochure'
                                             className='flex justify-start gap-4 font-medium w-80 h-14 text-sm items-center hover:text-[#ffbf00]'>
-                                            GET METRO PROPERTY LIST
+                                            {getPropertyListText}
                                             <GoDownload size={20}/>
                                         </Link>
                                     </div>
@@ -161,6 +168,7 @@ export default function Home() {
                     heading2={localizeField(homePage, 'propertyTypesHeading2', lang)}
                     paragraph1={localizeField(homePage, 'propertyTypesParagraph1', lang)}
                     paragraph2={localizeField(homePage, 'propertyTypesParagraph2', lang)}
+                    ctaSettings={ctaSettings}
                 />
 
                 <Schedule
@@ -168,6 +176,7 @@ export default function Home() {
                     subheading={localizeField(homePage, 'consultationSubheading', lang)}
                     body={localizeField(homePage, 'consultationBody', lang)}
                     staffPhoto={homePage?.staffPhoto}
+                    ctaSettings={ctaSettings}
                 />
             </div>
             <div className='w-full lg:w-[60%] flex lg:hidden justify-center'>

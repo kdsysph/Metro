@@ -5,6 +5,7 @@ import Link from "next/link";
 import CallIcon from '../../../public/CallIcon.svg'
 import {useLanguage} from '@/context/LanguageContext';
 import {localizeField} from '@/lib/localize';
+import {getCTAText, CTASettings} from '@/lib/cta-utils';
 
 const FALLBACK_HEADING = 'More than five locations to live your dream lifestyle';
 const FALLBACK_P1 = 'Metro Real Estate has developed over 200,000 square meters of prime real estate across Ethiopia, offering innovative properties that redefine urban living with thoughtful design and inviting spaces.';
@@ -22,14 +23,18 @@ interface NumbersSectionProps {
     heading?: string;
     paragraph1?: string;
     paragraph2?: string;
+    ctaSettings?: CTASettings | null;
 }
 
-const NumbersSection = ({setRegisterInterestOpen, stats, heading, paragraph1, paragraph2}: NumbersSectionProps) => {
+const NumbersSection = ({setRegisterInterestOpen, stats, heading, paragraph1, paragraph2, ctaSettings}: NumbersSectionProps) => {
     const { lang } = useLanguage();
     const displayStats = (stats && stats.length > 0) ? stats : FALLBACK_STATS;
     const displayHeading = heading || FALLBACK_HEADING;
     const displayP1 = paragraph1 || FALLBACK_P1;
     const displayP2 = paragraph2 || FALLBACK_P2;
+
+    const discoverButtonText = getCTAText(ctaSettings, 'discoverYourNextHomeButton', lang);
+    const downloadBrochureText = getCTAText(ctaSettings, 'downloadBrochureButton', lang);
 
     return (
         <div className='w-full flex flex-col justify-around gap-20'>
@@ -67,7 +72,7 @@ const NumbersSection = ({setRegisterInterestOpen, stats, heading, paragraph1, pa
                             <button
                                 onClick={() => setRegisterInterestOpen(true)}
                                 className='flex justify-center gap-4 font-semibold w-80 h-14 text-sm bg-primary hover:bg-primaryHover transition-all duration-200 items-center'>
-                                DISCOVER YOUR NEXT HOME
+                                {discoverButtonText}
                                 <Image src={NextIcon} width={20} height={20} alt='next'/>
                             </button>
                         </div>
@@ -75,7 +80,7 @@ const NumbersSection = ({setRegisterInterestOpen, stats, heading, paragraph1, pa
                             <Link
                                 href='/download-brochure'
                                 className='flex justify-center gap-4 font-normal w-80 h-14 text-sm items-center'>
-                                DOWNLOAD BROUCHER (2.8mB)
+                                {downloadBrochureText}
                                 <GoDownload color='#FFCF01'/>
                             </Link>
                         </div>

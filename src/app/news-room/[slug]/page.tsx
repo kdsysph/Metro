@@ -14,12 +14,15 @@ import {PortableText} from '@portabletext/react';
 import DiscoverProperties from '@/sections/DiscoverProperties';
 import {useLanguage} from '@/context/LanguageContext';
 import {localizeField} from '@/lib/localize';
+import {getCTASettings, CTASettings, getCTAText} from '@/lib/cta-utils';
+
 const NewsDetail = ({params}: { params: { slug: string } }) => {
     const {slug} = params;
     const {lang} = useLanguage();
     const [news, setNews] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [ctaSettings, setCtaSettings] = useState<CTASettings | null>(null);
 
     const context = useContext(SplashPageContext);
 
@@ -44,6 +47,7 @@ const NewsDetail = ({params}: { params: { slug: string } }) => {
             }
         }
         fetchNews();
+        getCTASettings().then(setCtaSettings);
     }, [slug]);
 
     useEffect(() => {
@@ -53,6 +57,8 @@ const NewsDetail = ({params}: { params: { slug: string } }) => {
             console.log("loading false", loading)
         }
     }, [loading]);
+
+    const downloadBrochureText = getCTAText(ctaSettings, 'downloadBrochureButton', lang);
 
     if (loading) {
         return <div className="flex justify-center items-center h-[50vh]">Loading...</div>;
@@ -165,8 +171,7 @@ const NewsDetail = ({params}: { params: { slug: string } }) => {
                             </a>
                             <Link
                                 href='/download-brochure'
-                                className='w-full lg:w-80 flex justify-center gap-4 font-normal  h-14 text-sm items-center'>DOWNLOAD
-                                BROUCHER (2.8mB)
+                                className='w-full lg:w-80 flex justify-center gap-4 font-normal  h-14 text-sm items-center'>{downloadBrochureText}
                                 <GoDownload color='#FFCF01'/>
                             </Link>
                         </div>

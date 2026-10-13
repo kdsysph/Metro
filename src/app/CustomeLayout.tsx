@@ -53,9 +53,10 @@ export function CustomeLayout({ children }: any) {
         async function fetchData() {
             try {
                 const [projectsData, settingsData] = await Promise.all([
-                    sanityClient.fetch(queries.allProjects),
-                    sanityClient.fetch(queries.siteSettings),
+                    fetch('/api/projects').then(res => res.json()),
+                    fetch('/api/site-settings').then(res => res.json()),
                 ]);
+                console.log('Fetched projects:', projectsData);
                 setProjects(projectsData);
                 setSiteSettings(settingsData);
             } catch (error) {

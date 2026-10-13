@@ -2,8 +2,19 @@ import Image from "next/image";
 import NextIcon from "../../../public/NextIcon.svg";
 import {GoDownload} from "react-icons/go";
 import Link from "next/link";
+import {useLanguage} from '@/context/LanguageContext';
+import {getCTASettings, CTASettings, getCTAText} from '@/lib/cta-utils';
+import {useState, useEffect} from 'react';
 
 const MetroLegalPage: React.FC = () => {
+    const {lang} = useLanguage();
+    const [ctaSettings, setCtaSettings] = useState<CTASettings | null>(null);
+
+    useEffect(() => {
+        getCTASettings().then(setCtaSettings);
+    }, []);
+
+    const downloadBrochureText = getCTAText(ctaSettings, 'downloadBrochureButton', lang);
     return (
         <div className='container mx-auto py-14 flex flex-col items-end gap-20 px-5 lg:px-0'>
             <div data-aos="fade-up" data-aos-duration="1000" className='flex justify-between items-center '>
@@ -104,8 +115,7 @@ const MetroLegalPage: React.FC = () => {
                 </Link>
                 <Link
                     href='/download-brochure'
-                    className='flex gap-4 font-normal w-full lg:w-80 h-14 text-center justify-center items-center'>DOWNLOAD
-                    BROUCHER (2.8mB)
+                    className='flex gap-4 font-normal w-full lg:w-80 h-14 text-center justify-center items-center'>{downloadBrochureText}
                     <GoDownload color='#FFCF01'/>
                 </Link>
             </div>

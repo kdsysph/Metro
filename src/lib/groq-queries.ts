@@ -288,4 +288,67 @@ export const queries = {
       formSubtext_am
     }
   `,
+
+  // CTA Settings singleton
+  ctaSettings: `
+    *[_type == "ctaSettings"][0] {
+      downloadBrochureButton,
+      downloadBrochureButton_am,
+      getPropertyListButton,
+      getPropertyListButton_am,
+      downloadSalesKitButton,
+      downloadSalesKitButton_am,
+      getProjectBrochureButton,
+      getProjectBrochureButton_am,
+      discoverYourNextHomeButton,
+      discoverYourNextHomeButton_am,
+      contactMetroSalesTeamButton,
+      contactMetroSalesTeamButton_am,
+      scheduleConsultationButton,
+      scheduleConsultationButton_am,
+      registerInterestButton,
+      registerInterestButton_am,
+      submitInterestButton,
+      submitInterestButton_am,
+      discoverNextHomeButton,
+      discoverNextHomeButton_am,
+      discoverSimilarPropertiesButton,
+      discoverSimilarPropertiesButton_am,
+      reachOutToTeamButton,
+      reachOutToTeamButton_am
+    }
+  `,
+
+  // Download Brochure page singleton
+  downloadBrochure: `
+    *[_type == "downloadBrochure"][0] {
+      heading,
+      heading_am,
+      description,
+      description_am,
+      fullNameLabel,
+      fullNameLabel_am,
+      emailLabel,
+      emailLabel_am,
+      propertySelectLabel,
+      propertySelectLabel_am,
+      propertyOptions[] {
+        propertyName,
+        propertyName_am,
+        brochureFile {
+          asset-> {
+            _id,
+            url,
+            originalFilename
+          }
+        }
+      },
+      termsText,
+      termsText_am,
+      termsLinkText,
+      termsLinkText_am,
+      submitButtonText,
+      submitButtonText_am
+    }
+  `,
 }

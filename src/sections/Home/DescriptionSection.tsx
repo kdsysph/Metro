@@ -8,6 +8,7 @@ import '@splidejs/react-splide/css';
 import {PortableText} from '@portabletext/react';
 import {useLanguage} from '@/context/LanguageContext';
 import {localizeField} from '@/lib/localize';
+import {getCTAText, CTASettings} from '@/lib/cta-utils';
 
 const FALLBACK_STATS = [
     { value: '58+ Years', label: 'ACTIVE IN THE ETHIOPIAN BUSINESS', description: 'Experience the Legacy of Over 58 Years in Ethiopian Business. Explore Our Established History and Commitment to Excellence!' },
@@ -15,11 +16,13 @@ const FALLBACK_STATS = [
     { value: '200K+ SQM', label: 'OF DEVELOPED REAL ESTATE LAND', description: 'Developed Over 200,000 sqm of Prime Real Estate. Explore Our Expansive Land Portfolio!' },
 ];
 
-const DescriptionSection = ({setRegisterInterestOpen, tagline, heading, paragraph1, paragraph2, stats}: any) => {
+const DescriptionSection = ({setRegisterInterestOpen, tagline, heading, paragraph1, paragraph2, stats, ctaSettings}: any) => {
     const { lang } = useLanguage();
     const displayTagline = tagline || 'WELCOME TO METRO REAL ESTATE';
     const displayHeading = heading || 'A home to live your dream lifestyle';
     const displayStats = stats?.length ? stats : FALLBACK_STATS;
+
+    const getPropertyListText = getCTAText(ctaSettings, 'getPropertyListButton', lang);
 
     const renderParagraph = (content: any, fallback: string) => {
         if (content && Array.isArray(content)) {
@@ -103,7 +106,7 @@ const DescriptionSection = ({setRegisterInterestOpen, tagline, heading, paragrap
                             <div className='hidden lg:flex w-1/2 lg:border-t-2 border-t-[#dbe5f1] pt-16'>
                                 <Link href='/download-brochure'
                                       className='flex justify-center gap-4 font-semibold w-80 h-14 text-sm items-center hover:text-[#ffbf00]'>
-                                    GET METRO PROPERTY LIST
+                                    {getPropertyListText}
                                     <GoDownload color='#041428 hover:color[#ffbf00]'/>
                                 </Link>
                             </div>

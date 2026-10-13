@@ -8,6 +8,9 @@ import Bedroom2Image from '../../public/2BedromImage.jpg';
 import Bedroom3Image from '../../public/3BedroomImage.jpg';
 import LuxuriousImage from '../../public/LuxuriousImage.jpg';
 import NextIconLight from '../../public/NextIconLight.svg';
+import {useLanguage} from '@/context/LanguageContext';
+import {getCTASettings, CTASettings, getCTAText} from '@/lib/cta-utils';
+import {useEffect, useState} from 'react';
 
 const PROPERTIES = [
     { href: '/life-style/2-1A-bedroom-apartment', image: Bedroom2Image, title: '2 Bedroom Apartment', site: 'KAZANCHIS PROJECT SITE' },
@@ -16,6 +19,14 @@ const PROPERTIES = [
 ];
 
 const DiscoverProperties = () => {
+    const {lang} = useLanguage();
+    const [ctaSettings, setCtaSettings] = useState<CTASettings | null>(null);
+
+    useEffect(() => {
+        getCTASettings().then(setCtaSettings);
+    }, []);
+
+    const discoverNextHomeText = getCTAText(ctaSettings, 'discoverNextHomeButton', lang);
     return (
         <div data-aos="fade-up" data-aos-duration="1000" className='w-full mt-10 flex flex-col gap-5'>
             <div className='w-full flex justify-between items-center'>
@@ -23,7 +34,7 @@ const DiscoverProperties = () => {
                 <Link
                     href='/property-list'
                     className='hidden lg:flex text-md justify-center gap-4 font-medium w-full lg:w-80 h-14 bg-[#00416B] text-white hover:bg-main transition-all duration-200 items-center'>
-                    Discover your next home
+                    {discoverNextHomeText}
                     <Image src={NextIconLight} width={20} height={20} alt='next'/>
                 </Link>
             </div>

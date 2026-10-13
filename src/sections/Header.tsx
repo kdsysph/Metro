@@ -11,14 +11,22 @@ import RegisterInterest from "@/sections/RegisterInterest";
 import {BsX} from 'react-icons/bs'
 import {SplashPageContext} from "@/context/SplashPageContext";
 import {useLanguage} from "@/context/LanguageContext";
+import {getCTASettings, CTASettings, getCTAText} from '@/lib/cta-utils';
 
 const Header = ({setProjects, projects}: any) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isRegisterInterestOpen, setRegisterInterestOpen] = useState(false);
+    const [ctaSettings, setCtaSettings] = useState<CTASettings | null>(null);
 
     const currentPage = usePathname();
     const {lang, setLang} = useLanguage();
+
+    useEffect(() => {
+        getCTASettings().then(setCtaSettings);
+    }, []);
+
+    const registerInterestText = getCTAText(ctaSettings, 'registerInterestButton', lang);
 
     useEffect(() => {
         console.log(isMobileMenuOpen);
@@ -224,7 +232,7 @@ const Header = ({setProjects, projects}: any) => {
                         <button
                             onClick={() => setRegisterInterestOpen(true)}
                             className='flex text-sm justify-center text-black font-semibold px-4 py-4 w-30 h-10 bg-primary hover:bg-primaryHover transition-all duration-200 items-center'>
-                            REGISTER INTEREST
+                            {registerInterestText}
                             <Image src={NextIcon} width={20} height={20} alt='next'/>
                         </button>
                     </div>
@@ -327,7 +335,7 @@ const Header = ({setProjects, projects}: any) => {
                         <button
                             onClick={handleRegistrationOpen}
                             className='flex text-xl justify-center text-black font-semibold px-4 py-8 w-full h-10 bg-primary hover:bg-primaryHover transition-all duration-200 items-center'>
-                            REGISTER INTEREST
+                            {registerInterestText}
                             <Image src={NextIcon} width={20} height={20} alt='next'/>
                         </button>
                     </div>

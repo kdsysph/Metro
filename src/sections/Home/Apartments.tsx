@@ -14,8 +14,14 @@ import Link from "next/link";
 import KazanchisSlide from '../../../public/KazanchisSlide.png'
 import Bulbula2 from '../../../public/Bulbula2.png'
 import {useState} from "react";
+import {useLanguage} from '@/context/LanguageContext';
+import {getCTASettings, CTASettings, getCTAText} from '@/lib/cta-utils';
+import {useEffect} from 'react';
 
-const Apartments = ({heading1, heading2, paragraph1, paragraph2}: any) => {
+const Apartments = ({heading1, heading2, paragraph1, paragraph2, ctaSettings}: any) => {
+    const {lang} = useLanguage();
+
+    const contactSalesTeamText = getCTAText(ctaSettings, 'contactMetroSalesTeamButton', lang);
     const splideOptions: any = {
         perPage: 1,
         arrows: true,
@@ -51,7 +57,7 @@ const Apartments = ({heading1, heading2, paragraph1, paragraph2}: any) => {
                         <Link
                             href='/contact#form-section'
                             className='flex justify-center gap-4 font-semibold w-full lg:w-80 h-[72px] text-[16px] lg:text-sm bg-primary hover:bg-primaryHover transition-all duration-200 items-center'>
-                            CONTACT METRO SALES TEAM
+                            {contactSalesTeamText}
                             <Image src={NextIcon} width={20} height={20} alt='next'/>
                         </Link>
                     </div>

@@ -6,6 +6,8 @@ import homePage from './documents/homePage'
 import aboutPage from './documents/aboutPage'
 import galleryPage from './documents/galleryPage'
 import contactPage from './documents/contactPage'
+import ctaSettings from './documents/ctaSettings'
+import downloadBrochure from './documents/downloadBrochure'
 import mapLocation from './objects/mapLocation'
 import imageWithRole from './objects/imageWithRole'
 import amenityItem from './objects/amenityItem'
@@ -22,6 +24,8 @@ export const schemaTypes = [
   aboutPage,
   galleryPage,
   contactPage,
+  ctaSettings,
+  downloadBrochure,
   // Objects
   mapLocation,
   imageWithRole,

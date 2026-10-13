@@ -27,6 +27,7 @@ import AmenityCards from "@/sections/AmenityCards";
 import DiscoverProperties from "@/sections/DiscoverProperties";
 import {useLanguage} from '@/context/LanguageContext';
 import {localizeField} from '@/lib/localize';
+import {getCTASettings, CTASettings, getCTAText} from '@/lib/cta-utils';
 
 const BULBULA = {latitude: 8.9451929, longitude: 38.7851493};
 
@@ -37,15 +38,21 @@ const TownhousePage = () => {
     const [unit, setUnit] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [ctaSettings, setCtaSettings] = useState<CTASettings | null>(null);
 
     useEffect(() => {
         sanityClient.fetch(queries.propertyUnitByTypeAndSite, {unitType: 'townhouse', site: 'BULBULA'})
             .then((data: any) => {setUnit(data); setLoading(false);})
             .catch(() => {setError('Failed to load'); setLoading(false);});
+
+        getCTASettings().then(setCtaSettings);
     }, []);
 
     if (loading) return <SplashPage/>;
     if (error || !unit) return <div>Error loading townhouse details</div>;
+
+    const downloadSalesKitText = getCTAText(ctaSettings, 'downloadSalesKitButton', lang);
+    const downloadBrochureText = getCTAText(ctaSettings, 'downloadBrochureButton', lang);
 
     const bannerUrl = unit.images?.find((i: any) => i.role === 'banner')?.image
         ? getImageUrl(unit.images.find((i: any) => i.role === 'banner').image) : null;
@@ -107,7 +114,7 @@ const TownhousePage = () => {
                                 </div>
                             </div>
                             <Link href='/download-brochure' className='flex gap-4 font-semibold w-80 items-center'>
-                                DOWNLOAD SALES KIT
+                                {downloadSalesKitText}
                                 <GoDownload color='#FFCF01'/>
                             </Link>
                         </div>
@@ -218,7 +225,7 @@ const TownhousePage = () => {
                     <div className='w-1/2'>
                         <Link href='/download-brochure'
                               className='hidden lg:flex justify-start gap-4 font-semibold w-full lg:w-80 h-14 text-sm items-center'>
-                            DOWNLOAD BROUCHER (2.8mB)
+                            {downloadBrochureText}
                             <GoDownload color='#FFCF01'/>
                         </Link>
                     </div>

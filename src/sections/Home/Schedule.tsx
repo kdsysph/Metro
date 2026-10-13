@@ -3,13 +3,17 @@ import NextIcon from "../../../public/NextIcon.svg";
 import PeopleImage from '../../../public/Staff photo.jpg';
 import Link from "next/link";
 import {getImageUrl} from '@/lib/sanity';
+import {useLanguage} from '@/context/LanguageContext';
+import {getCTAText, CTASettings} from '@/lib/cta-utils';
 
-const Schedule = ({heading, subheading, body, staffPhoto}: any) => {
+const Schedule = ({heading, subheading, body, staffPhoto, ctaSettings}: any) => {
+    const {lang} = useLanguage();
     const displayHeading = heading || 'Connect with\nOur Sales Team\nfor a Free\nConsultation!';
     const displaySubheading = subheading || 'Let Us Guide You Home';
     const displayBody = body || 'Gain personalized guidance and expert advice tailored to your needs. Book a consultation with our sales experts and discover your dream home today.';
 
     const staffImageUrl = staffPhoto ? getImageUrl(staffPhoto) : null;
+    const scheduleConsultationText = getCTAText(ctaSettings, 'scheduleConsultationButton', lang);
 
     return (
         <div data-aos="fade-up" data-aos-duration="1000">
@@ -30,7 +34,7 @@ const Schedule = ({heading, subheading, body, staffPhoto}: any) => {
                         <Link
                             href='/contact#form-section'
                             className='w-full lg:w-80 flex justify-center gap-4 h-[72px] text-[16px] font-semibold lg:text-md bg-primary hover:bg-primaryHover transition-all duration-200 items-center'>
-                            SCHEDULE A CONSULTATION
+                            {scheduleConsultationText}
                             <Image src={NextIcon} width={24} height={24} alt='next'/>
                         </Link>
                     </div>

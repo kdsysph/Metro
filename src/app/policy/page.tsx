@@ -4,8 +4,19 @@ import AbourImage2 from "../../../public/about2Image.svg";
 import Link from "next/link";
 import NextIcon from "../../../public/NextIcon.svg";
 import {GoDownload} from "react-icons/go";
+import {useLanguage} from '@/context/LanguageContext';
+import {getCTASettings, CTASettings, getCTAText} from '@/lib/cta-utils';
+import {useState, useEffect} from 'react';
 
 const Policy = () => {
+    const {lang} = useLanguage();
+    const [ctaSettings, setCtaSettings] = useState<CTASettings | null>(null);
+
+    useEffect(() => {
+        getCTASettings().then(setCtaSettings);
+    }, []);
+
+    const downloadBrochureText = getCTAText(ctaSettings, 'downloadBrochureButton', lang);
     return (
         <div className='container mx-auto py-14 flex flex-col items-end gap-20 px-5 lg:px-0'>
             <div
@@ -398,8 +409,7 @@ const Policy = () => {
                         <div className=''>
                             <Link
                                 href='/download-brochure'
-                                className='flex justify-center gap-4 font-normal w-80 h-14 text-sm items-center'>DOWNLOAD
-                                BROUCHER (2.8mB)
+                                className='flex justify-center gap-4 font-normal w-80 h-14 text-sm items-center'>{downloadBrochureText}
                                 <GoDownload color='#FFCF01'/>
                             </Link>
                         </div>

@@ -3,9 +3,18 @@ import NextIcon from '../../public/NextIcon.svg';
 import Image from "next/image";
 import {AiOutlineClose} from "react-icons/ai";
 import Link from "next/link";
-import emailjs from "@emailjs/browser";
+import {useLanguage} from '@/context/LanguageContext';
+import {getCTASettings, CTASettings, getCTAText} from '@/lib/cta-utils';
 
 const RegisterInterest = ({isRegisterInterestOpen, setRegisterInterestOpen}: any) => {
+    const {lang} = useLanguage();
+    const [ctaSettings, setCtaSettings] = useState<CTASettings | null>(null);
+
+    useEffect(() => {
+        getCTASettings().then(setCtaSettings);
+    }, []);
+
+    const submitInterestText = getCTAText(ctaSettings, 'submitInterestButton', lang);
     const closeDialog = () => {
         setRegisterInterestOpen(false);
     };
@@ -58,26 +67,33 @@ const RegisterInterest = ({isRegisterInterestOpen, setRegisterInterestOpen}: any
         return formattedData;
     };
 
-    const submitInterest = (e) => {
+    const submitInterest = async (e) => {
         e.preventDefault()
-        const templateParams = {
-            from_email: formData.email,
-            from_name: formData.name,
-            message: formatFormData(formData)
-        };
+        setLoading(true)
 
-        emailjs.send(process.env.NEXT_PUBLIC_SERVICE_ID, process.env.NEXT_PUBLIC_TEMPLATE_ID, templateParams, {
-            publicKey: process.env.NEXT_PUBLIC_KEY
-        })
-            .then((result) => {
-                console.log('SUCCESS', result)
+        try {
+            const response = await fetch('/api/register-interest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log('SUCCESS', data)
                 setLoading(false)
                 setIsRegistrationCompleted(true)
-            }, (error) => {
-                console.log('FAILED', error)
+            } else {
+                console.log('FAILED', data)
                 setLoading(false)
-            })
-
+            }
+        } catch (error) {
+            console.log('FAILED', error)
+            setLoading(false)
+        }
     }
     return (
         <dialog
@@ -193,7 +209,7 @@ const RegisterInterest = ({isRegisterInterestOpen, setRegisterInterestOpen}: any
                                         <button
                                             type='submit'
                                             className='flex text-md justify-center gap-4 font-semibold uppercase w-full lg:w-[45%] h-[72px] text-[16px]  hover:bg-primaryHover transition-all duration-200 bg-primary items-center'>
-                                            Submit My Interest
+                                            {submitInterestText}
                                             <Image src={NextIcon} width={20} height={20} alt='next'/>
                                         </button>
                                     </div>

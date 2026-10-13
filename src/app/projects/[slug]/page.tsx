@@ -21,6 +21,7 @@ import {PortableText} from '@portabletext/react';
 import DiscoverProperties from '@/sections/DiscoverProperties';
 import {useLanguage} from '@/context/LanguageContext';
 import {localizeField} from '@/lib/localize';
+import {getCTASettings, CTASettings, getCTAText, getProjectBrochureText} from '@/lib/cta-utils';
 
 const FALLBACK_AMENITIES = [
     { icon: PrimeLocationIcon, title: 'PRIME LOCATIONS', description: 'Strategically located within reasonable proximity to Bole Intl. Airport and Meskel Square.' },
@@ -34,6 +35,7 @@ const ProjectDetail = ({params}: { params: { slug: string } }) => {
     const [project, setProject] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [ctaSettings, setCtaSettings] = useState<CTASettings | null>(null);
     const {lang} = useLanguage();
 
     const {slug} = params;
@@ -52,7 +54,9 @@ const ProjectDetail = ({params}: { params: { slug: string } }) => {
                 setLoading(false);
             }
         }
+
         fetchProject();
+        getCTASettings().then(setCtaSettings);
     }, [slug]);
 
     if (loading) {
@@ -62,6 +66,9 @@ const ProjectDetail = ({params}: { params: { slug: string } }) => {
     if (error || !project) {
         return <div className="flex justify-center items-center h-[50vh]">Project not found</div>;
     }
+
+    const downloadBrochureText = getCTAText(ctaSettings, 'downloadBrochureButton', lang);
+    const projectBrochureText = getProjectBrochureText(ctaSettings, project.projectName || 'Project', lang);
 
     const projectComponents = {
         block: ({ children }: any) => <p>{children}</p>,
@@ -103,7 +110,7 @@ const ProjectDetail = ({params}: { params: { slug: string } }) => {
                             </div>
                             <Link
                                 href='/download-brochure'
-                                className='flex gap-4 font-semibold w-80 h-[4rem] items-center uppercase'>GET {project.projectName} BROCHURE
+                                className='flex gap-4 font-semibold w-80 h-[4rem] items-center uppercase'>{projectBrochureText}
                                 <GoDownload color='#FFCF01'/>
                             </Link>
                         </div>
@@ -266,8 +273,7 @@ const ProjectDetail = ({params}: { params: { slug: string } }) => {
                         </button>
                         <Link
                             href='/download-brochure'
-                            className='flex justify-center text-white gap-4 ml-[18%] font-semibold w-full lg:w-80 h-14 text-sm items-center'>DOWNLOAD
-                            BROUCHER (2.8mB)
+                            className='flex justify-center text-white gap-4 ml-[18%] font-semibold w-full lg:w-80 h-14 text-sm items-center'>{downloadBrochureText}
                             <GoDownload color='#002e6b' size={20}/>
                         </Link>
 
