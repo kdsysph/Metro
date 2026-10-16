@@ -173,19 +173,19 @@ const TownhousePage = () => {
                     <div className='w-full flex justify-end gap-4 items-center'>
                         <div className='flex flex-col gap-10 w-full lg:w-[66.5%]'>
                             <div className='hidden lg:flex flex-col lg:flex-row justify-between gap-5'>
-                                <Image src={galleryImages[0] ? {src: getImageUrl(galleryImages[0].image), width: 460, height: 460} as any : townhouse2Image}
+                                <Image src={galleryImages[0] && getImageUrl(galleryImages[0].image) ? {src: getImageUrl(galleryImages[0].image), width: 460, height: 460} as any : townhouse2Image}
                                        alt='' className='w-full md:w-[49%]' width={460} height={460}/>
-                                <Image src={galleryImages[1] ? {src: getImageUrl(galleryImages[1].image), width: 460, height: 460} as any : townhouse3Image}
+                                <Image src={galleryImages[1] && getImageUrl(galleryImages[1].image) ? {src: getImageUrl(galleryImages[1].image), width: 460, height: 460} as any : townhouse3Image}
                                        alt='' className='w-full md:w-[49%]' width={460} height={460}/>
                             </div>
                             <div className='lg:hidden flex flex-col lg:flex-row justify-between gap-5'>
                                 <Splide options={{type: 'loop', perPage: 1, perMove: 1, gap: '1rem', pagination: false, arrows: true, autoplay: true, interval: 3000, pauseOnHover: true}}>
                                     <SplideSlide>
-                                        <Image src={galleryImages[0] ? {src: getImageUrl(galleryImages[0].image), width: 460, height: 460} as any : townhouse2Image}
+                                        <Image src={galleryImages[0] && getImageUrl(galleryImages[0].image) ? {src: getImageUrl(galleryImages[0].image), width: 460, height: 460} as any : townhouse2Image}
                                                alt='' className='w-full md:w-[49%] h-full' width={460} height={460}/>
                                     </SplideSlide>
                                     <SplideSlide>
-                                        <Image src={galleryImages[1] ? {src: getImageUrl(galleryImages[1].image), width: 460, height: 460} as any : townhouse3Image}
+                                        <Image src={galleryImages[1] && getImageUrl(galleryImages[1].image) ? {src: getImageUrl(galleryImages[1].image), width: 460, height: 460} as any : townhouse3Image}
                                                alt='' className='w-full md:w-[49%] h-full' width={460} height={460}/>
                                     </SplideSlide>
                                 </Splide>

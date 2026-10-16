@@ -126,6 +126,17 @@ export const queries = {
     }
   `,
 
+  // Get all property units by site (for project detail pages)
+  propertyUnitsBySite: `
+    *[_type == "propertyUnit" && site == $site] | order(unitType asc) {
+      _id,
+      unitType,
+      site,
+      slug,
+      coverImage
+    }
+  `,
+
   // Global site settings (navbar/footer)
   siteSettings: `
     *[_type == "siteSettings"][0] {

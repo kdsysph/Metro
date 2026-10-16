@@ -142,7 +142,7 @@ const Footer = ({projects, siteSettings}: any) => {
                             <div className='flex flex-col gap-6'>
                                 <p className='text-[#738195] text-sm'>PROJECTS</p>
                                 <div className='text-white text-sm flex flex-col gap-2'>
-                                    <Link href='/property-list/' className='hover:text-[#ffbf00]'>Metro Properties</Link>
+                                    <Link href='/property-list/' className='hidden hover:text-[#ffbf00]'>Metro Properties</Link>
                                     {projects?.map((project: any, index: number) => (
                                         <Link key={index}
                                               href={`/projects/${project.slug?.current}`}

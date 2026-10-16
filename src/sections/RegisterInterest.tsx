@@ -6,7 +6,7 @@ import Link from "next/link";
 import {useLanguage} from '@/context/LanguageContext';
 import {getCTASettings, CTASettings, getCTAText} from '@/lib/cta-utils';
 
-const RegisterInterest = ({isRegisterInterestOpen, setRegisterInterestOpen}: any) => {
+const RegisterInterest = ({isRegisterInterestOpen, setRegisterInterestOpen, currentProjectSlug}: any) => {
     const {lang} = useLanguage();
     const [ctaSettings, setCtaSettings] = useState<CTASettings | null>(null);
 
@@ -14,6 +14,7 @@ const RegisterInterest = ({isRegisterInterestOpen, setRegisterInterestOpen}: any
         getCTASettings().then(setCtaSettings);
     }, []);
 
+    const buttonHref = currentProjectSlug ? `/projects/${currentProjectSlug}` : '/projects/bulbula';
     const submitInterestText = getCTAText(ctaSettings, 'submitInterestButton', lang);
     const closeDialog = () => {
         setRegisterInterestOpen(false);
@@ -243,7 +244,7 @@ const RegisterInterest = ({isRegisterInterestOpen, setRegisterInterestOpen}: any
                                         perfect property. We will get back to you shortly!
                                     </p>
                                 </div>
-                                <a href='/property-list'
+                                <a href={buttonHref}
                                    type='submit'
                                    className='flex text-md justify-center gap-4 font-medium w-full lg:w-80 h-14 bg-primary hover:bg-primaryHover transition-all duration-200 items-center'>
                                     Discover Similar Properties

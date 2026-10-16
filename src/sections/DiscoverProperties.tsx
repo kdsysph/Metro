@@ -18,7 +18,7 @@ const PROPERTIES = [
     { href: '/life-style/penthouse', image: LuxuriousImage, title: 'Luxurious Penthouses', site: 'KAZANCHIS PROJECT SITE' },
 ];
 
-const DiscoverProperties = () => {
+const DiscoverProperties = ({currentProjectSlug}: {currentProjectSlug?: string}) => {
     const {lang} = useLanguage();
     const [ctaSettings, setCtaSettings] = useState<CTASettings | null>(null);
 
@@ -27,12 +27,13 @@ const DiscoverProperties = () => {
     }, []);
 
     const discoverNextHomeText = getCTAText(ctaSettings, 'discoverNextHomeButton', lang);
+    const buttonHref = currentProjectSlug ? `/projects/${currentProjectSlug}` : '/projects/bulbula';
     return (
         <div data-aos="fade-up" data-aos-duration="1000" className='w-full mt-10 flex flex-col gap-5'>
             <div className='w-full flex justify-between items-center'>
                 <p className='text-3xl text-white font-medium'>Discover Metro Properties</p>
                 <Link
-                    href='/property-list'
+                    href={buttonHref}
                     className='hidden lg:flex text-md justify-center gap-4 font-medium w-full lg:w-80 h-14 bg-[#00416B] text-white hover:bg-main transition-all duration-200 items-center'>
                     {discoverNextHomeText}
                     <Image src={NextIconLight} width={20} height={20} alt='next'/>

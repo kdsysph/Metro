@@ -94,7 +94,7 @@ export default function Home() {
                             <div className='flex flex-col lg:flex-row gap-10 lg:gap-0 justify-evenly w-full'>
                                 <div className='w-full flex flex-col lg:flex-row justify-start gap-5 text-white'>
                                     <div className='w-full lg:w-1/2'>
-                                        <a href='/property-list'
+                                        <a href='/projects/bulbula'
                                            className='flex text-md justify-center gap-4 font-medium w-full lg:w-80 h-[4rem] bg-[#041428] border-2 border-[#ffbf00] hover:bg-[#ffbf00] hover:text-[#041428] transition-all duration-200 items-center'>
                                             CHECK OUT METRO LOCATIONS
                                             <Image src={NextIconLight} width={30} height={30} alt='next'/>

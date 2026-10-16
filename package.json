@@ -30,6 +30,7 @@
     "react-redux": "^9.1.1",
     "react-simple-chatbot": "^0.6.1",
     "resend": "^6.32.1",
+    "sanity": "^6.19.0",
     "sharp": "^0.33.3",
     "styled-components": "^4.4.1",
     "swiper": "^11.1.1",

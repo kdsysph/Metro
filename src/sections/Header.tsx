@@ -188,7 +188,7 @@ const Header = ({setProjects, projects}: any) => {
                         News Room
                     </Link>
                     <Link href="/property-list"
-                          className={`py-2 block hover:text-primary ${currentPage === '/property-list' ? 'text-primary' : ''}`}>
+                          className={`hidden py-2 block hover:text-primary ${currentPage === '/property-list' ? 'text-primary' : ''}`}>
                         Properties
                     </Link>
                     <Link href="/about-metro"
@@ -316,7 +316,7 @@ const Header = ({setProjects, projects}: any) => {
                         News Room
                     </Link>
                     <Link onClick={() => setMobileMenuOpen(false)} href="/property-list"
-                          className={`hover:bg-gray-800 text-xl flex gap-2 items-center py-2 px-3 w-full hover:text-primary ${currentPage === '/property-list' ? 'text-primary' : ''}`}>
+                          className={`hidden hover:bg-gray-800 text-xl flex gap-2 items-center py-2 px-3 w-full hover:text-primary ${currentPage === '/property-list' ? 'text-primary' : ''}`}>
                         <span className='text-[#6B7280]'>05</span>
                         Properties
                     </Link>

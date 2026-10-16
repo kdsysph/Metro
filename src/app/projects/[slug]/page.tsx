@@ -22,6 +22,7 @@ import DiscoverProperties from '@/sections/DiscoverProperties';
 import {useLanguage} from '@/context/LanguageContext';
 import {localizeField} from '@/lib/localize';
 import {getCTASettings, CTASettings, getCTAText, getProjectBrochureText} from '@/lib/cta-utils';
+import {unitTypeToPath, unitTypeLabel} from '@/lib/unitTypeToPath';
 
 const FALLBACK_AMENITIES = [
     { icon: PrimeLocationIcon, title: 'PRIME LOCATIONS', description: 'Strategically located within reasonable proximity to Bole Intl. Airport and Meskel Square.' },
@@ -33,12 +34,20 @@ const FALLBACK_AMENITIES = [
 const ProjectDetail = ({params}: { params: { slug: string } }) => {
     const [isRegisterInterestOpen, setRegisterInterestOpen] = useState(false);
     const [project, setProject] = useState<any>(null);
+    const [units, setUnits] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [ctaSettings, setCtaSettings] = useState<CTASettings | null>(null);
     const {lang} = useLanguage();
 
     const {slug} = params;
+
+    const slugToSiteMap: Record<string, string> = {
+        'sarbet': 'SARBET',
+        'kazanchis': 'KAZANCHIS',
+        'bulbula': 'BULBULA'
+    };
+    const site = slugToSiteMap[slug] || slug.toUpperCase();
 
     useEffect(() => {
         async function fetchProject() {
@@ -55,9 +64,20 @@ const ProjectDetail = ({params}: { params: { slug: string } }) => {
             }
         }
 
+        async function fetchUnits() {
+            try {
+                const data = await sanityClient.fetch(queries.propertyUnitsBySite, { site });
+                setUnits(data || []);
+            } catch (err) {
+                console.error('Error fetching units:', err);
+                setUnits([]);
+            }
+        }
+
         fetchProject();
+        fetchUnits();
         getCTASettings().then(setCtaSettings);
-    }, [slug]);
+    }, [slug, site]);
 
     if (loading) {
         return <div className="flex justify-center items-center h-[50vh]">Loading...</div>;
@@ -194,13 +214,71 @@ const ProjectDetail = ({params}: { params: { slug: string } }) => {
                         </div>
                     </div>
 
-                    <div className="w-full h-[60vh] lg:h-[70vh] bg-cover bg-center"
-                         style={{backgroundImage: `url(${getImageUrl(project.images?.filter((i: any) => i.role === 'gallery')[2]?.image)})`}}>
+                    <div className='w-full flex flex-col gap-10'>
+                        <p className='text-3xl lg:text-4xl font-medium text-[#001624]'>
+                            Available Units at Metro™ {project.projectName}
+                        </p>
+                            {units.length === 0 ? (
+                                <p className='text-[#738195] font-normal'>No units available</p>
+                            ) : (
+                                <>
+                                    {/* Desktop grid */}
+                                    <div className='w-full hidden lg:flex flex-wrap justify-between gap-y-10'>
+                                        {units.map((unit) => {
+                                            const path = unitTypeToPath[unit.unitType] ?? `/projects/${slug}`;
+                                            const imageUrl = unit.coverImage ? getImageUrl(unit.coverImage) : '';
+                                            const locationLabel = site.charAt(0) + site.slice(1).toLowerCase();
+                                            return (
+                                                <Link
+                                                    key={unit._id}
+                                                    className='w-full lg:w-[33%] flex flex-col gap-4 transition-transform duration-300 hover:scale-105'
+                                                    href={`${path}?location=${locationLabel}`}
+                                                >
+                                                    <div
+                                                        className='w-full bg-cover bg-center bg-gray-100'
+                                                        style={{ backgroundImage: imageUrl ? `url(${imageUrl})` : undefined, height: '300px' }}
+                                                    />
+                                                    <div className='flex flex-col gap-2'>
+                                                        <p className='text-[#001624] text-lg font-medium'>{unitTypeLabel[unit.unitType] ?? unit.unitType}</p>
+                                                    </div>
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
+                                    {/* Mobile carousel */}
+                                    <div className='lg:hidden block'>
+                                        <Splide options={{ perPage: 1, arrows: true, autoplay: true, interval: 3000, type: 'loop', pagination: false }}>
+                                            {units.map((unit) => {
+                                                const path = unitTypeToPath[unit.unitType] ?? `/projects/${slug}`;
+                                                const imageUrl = unit.coverImage ? getImageUrl(unit.coverImage) : '';
+                                                const locationLabel = site.charAt(0) + site.slice(1).toLowerCase();
+                                                return (
+                                                    <SplideSlide key={unit._id}>
+                                                        <Link
+                                                            className='w-full flex flex-col gap-4 transition-transform duration-300 hover:scale-105'
+                                                            href={`${path}?location=${locationLabel}`}
+                                                        >
+                                                            <div
+                                                                className='w-full bg-cover bg-center bg-gray-100'
+                                                                style={{ backgroundImage: imageUrl ? `url(${imageUrl})` : undefined, height: '300px' }}
+                                                            />
+                                                            <div className='flex flex-col gap-2'>
+                                                                <p className='text-[#001624] text-lg font-medium'>{unitTypeLabel[unit.unitType] ?? unit.unitType}</p>
+                                                            </div>
+                                                        </Link>
+                                                    </SplideSlide>
+                                                );
+                                            })}
+                                        </Splide>
+                                    </div>
+                                </>
+                            )}
                     </div>
 
                     {
                         isRegisterInterestOpen ? <RegisterInterest isRegisterInterestOpen={isRegisterInterestOpen}
-                                                                   setRegisterInterestOpen={setRegisterInterestOpen}/> : null
+                                                                   setRegisterInterestOpen={setRegisterInterestOpen}
+                                                                   currentProjectSlug={slug}/> : null
 
                     }
                 </div>
@@ -305,7 +383,7 @@ const ProjectDetail = ({params}: { params: { slug: string } }) => {
                         </div>
                     </div>
 
-                    <DiscoverProperties />
+                    <DiscoverProperties currentProjectSlug={slug} />
                 </div>
             </div>
         </>
